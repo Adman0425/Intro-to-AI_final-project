@@ -98,6 +98,8 @@ class TextModel():
 
     def save_model(self, save_path: str):
         """Save the trained model to the specified path."""
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
         self.model.save_pretrained(save_path)
         self.tokenizer.save_pretrained(save_path)
         print(f"Model and tokenizer saved to {save_path}")
