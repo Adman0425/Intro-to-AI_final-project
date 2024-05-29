@@ -4,6 +4,13 @@ from transformers import GPT2Config, GPT2Tokenizer, TextGenerationPipeline
 from src.config import ProjectConfig
 from src.model import TextModel
 import matplotlib.pyplot as plt
+import json
+
+def read_jsonl(file_path):
+    import json
+    with open(file_path, "r", encoding="utf-8") as file:
+        data = [json.loads(line.strip()) for line in file]
+    return data
 
 # Setting metadata and configuration
 print("==> Setting Metadata:")
@@ -52,9 +59,15 @@ def create_dataset(tokenizer: GPT2Tokenizer, dataset_type: str) -> tf.data.Datas
     Returns:
         tf.data.Dataset: The created dataset.
     """
+    # data_path = project_config.train_pos if dataset_type == "train" else project_config.test_pos
+    # with open(data_path, "r", encoding='utf-8') as file:
+    #     text_data = file.read().replace("\n", " ")
+
     data_path = project_config.train_pos if dataset_type == "train" else project_config.test_pos
-    with open(data_path, "r", encoding='utf-8') as file:
-        text_data = file.read().replace("\n", " ")
+    jsonl_data = read_jsonl(data_path)
+    
+    # 提取文本内容
+    text_data = " ".join([msg['content'] for item in jsonl_data for msg in item['messages']])
 
     tokenized_data = tokenizer.encode(text_data)
     print("\tText Encoded...")
@@ -126,6 +139,12 @@ def main():
     train_model.train(dataset=train_dataset)
     test_model.train(dataset=test_dataset)
     print("\tModel trained...")
+
+    # Save models
+    print("==> Saving models:")
+    train_model.save("save_train_model")
+    test_model.save("save_test_model")
+    print("\tModels saved...")
 
     # Visualize results
     print("==> Visualizing results:")

@@ -96,6 +96,11 @@ class TextModel():
         )
         return self.model
 
+    def save_model(self, save_path: str):
+        """Save the trained model to the specified path."""
+        self.model.save_pretrained(save_path)
+        self.tokenizer.save_pretrained(save_path)
+        print(f"Model and tokenizer saved to {save_path}")
 
     def visualize(self):
         """ Visualize 
