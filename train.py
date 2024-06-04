@@ -116,6 +116,7 @@ def visualize_comparison(train_model: TextModel, test_model: TextModel):
 
 
 def main():
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     # Load tokenizers
     print("==> Loading tokenizer:")
     train_tokenizer = load_tokenizer(tokenizer_type='train')
